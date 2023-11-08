@@ -7,7 +7,7 @@ const moveFiles = (filePaths: string[], dirPath: string) => {
     const newPath = `${dirPath}/${fileName}`;
     if (existsSync(newPath)) {
       console.log(`File already exists: ${newPath}. Skiping...`);
-      return;
+      continue;
     }
     renameSync(path, newPath);
     console.log(`Moved successfully: ${path} -> ${newPath}`);
