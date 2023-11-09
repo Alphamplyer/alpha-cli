@@ -1,4 +1,4 @@
-import { SearchNumberWithEPrefixAlgorithms } from './search-number-with-prefix-algorithm';
+import { SearchNumberWithEPrefixAlgorithms } from './search-number-with-prefix-algorithm.js';
 
 test('should find a episode number with the given prefix', () => {
   const algo = new SearchNumberWithEPrefixAlgorithms({ prefix: 'E' });

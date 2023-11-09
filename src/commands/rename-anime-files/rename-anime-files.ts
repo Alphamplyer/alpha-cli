@@ -1,11 +1,44 @@
-import { existsSync, renameSync } from "fs";
-import { searchFiles } from "../../utils.js";
+import { rename } from "fs/promises";
 import { SearchNumberSimpleAlgorithm } from "./search-episode-number-algorithms/search-number-simple-algorithm.js";
 import { SearchNumberWithEPrefixAlgorithms } from "./search-episode-number-algorithms/search-number-with-prefix-algorithm.js";
 import { SearchNumberAlgorithm } from "./search-episode-number-algorithms/search-number-algorithm.js";
 import { FormatingAlgorithm } from "./formating-algorithms/formating-algorithms.js";
 import { RemoveCodec } from "./formating-algorithms/remove-codec.js";
 import { RemoveSeasonNumber } from "./formating-algorithms/remove-season-number.js";
+import { DefaultCommandOptions } from "../../base/default-command-options.js";
+import { isExists, searchFiles } from "../../helpers/files-helper.js";
+import { parse } from "path";
+import chalk from "chalk";
+
+
+export interface RenameAnimeFilesOptions extends DefaultCommandOptions {
+  fileType: string;
+  offset: number;
+}
+
+export async function renameAnimeFiles(options: RenameAnimeFilesOptions) {
+  console.log(chalk.gray(`Renaming anime files...`));
+
+  for await (const path of searchFiles({
+    debug: options.debug,
+    dirPath: process.cwd(),
+    fileType: options.fileType,
+    recursionLevels: 0
+  })) {
+    if (options.debug) {
+      console.log(`  \u2192 ${chalk.yellow('File founded')} at ${chalk.cyan('"' + path + '"')}`);
+    }
+
+    await renameAnimeFile({
+      debug: options.debug,
+      filePath: path, 
+      fileType: options.fileType, 
+      offset: 0
+    });
+  }
+
+  console.log(chalk.green(`\nProcess finished.\n`));
+}
 
 const formatingAlgorithms : FormatingAlgorithm[] = [
   new RemoveCodec(),
@@ -38,45 +71,38 @@ const formatFileName = (fileName: string): string => {
   return formattedFileName;
 }
 
-const renameAnimeFile = (filePath: string, fileType: string) => {
-  const fileName = filePath.split("/").pop();
-  if (fileName === undefined) {
-    console.log(`Error - file name not found in path: ${filePath}. Skiping...`);
+export interface RenameAnimeFileOptions extends DefaultCommandOptions {
+  filePath: string;
+  fileType: string;
+  offset: number;
+}
+
+async function renameAnimeFile (options: RenameAnimeFileOptions) {
+  const path = parse(options.filePath);
+  const fileName = path.base;
+  const fileType = path.ext.substring(1);
+
+  if (fileName.startsWith('Épisode')) {
+    console.log(`${options.debug ? "    \u2192" : ""} ${chalk.red('Skiping')} Episode was already renamed`);
     return;
   }
 
   const episodeNumber = searchEpisodeNumber(fileName);
   if (!episodeNumber) {
-    console.log(`Episode number not found in file: ${fileName}. Skiping...`);
-    return;
-  }
-  const newFileName = `Épisode ${episodeNumber}.${fileType}`;
-  const newPath = filePath.replace(fileName, newFileName);
-  if (existsSync(newPath)) {
-    console.log(`File already exists: ${newPath}. Skiping...`);
-    return;
-  }
-  renameSync(filePath, newPath);
-  console.log(`Renamed successfully: ${fileName} -> ${newFileName}`);
-};
-
-export default function renameAnimeFiles() {
-  const args = process.argv.slice(3);
-  let fileType = args[0] || null;
-  const dirPath = args[1] || process.cwd();
-
-  if (!fileType) {
-    console.log("Error - file type is missing. Please provide file type.");
+    console.log(`${options.debug ? "    \u2192" : ""} ${chalk.red('Skiping')} Episode number not found in file name : ${chalk.cyan('"' + fileName + '"')}`);
     return;
   }
 
-  if (fileType[0] === ".") {
-    fileType = fileType.substring(1);
+  const newFileName = `Épisode ${(episodeNumber + options.offset)}.${fileType}`;
+
+  const newPath = options.filePath.replace(fileName, newFileName);
+  if (await isExists(newPath)) {
+    console.log(`${options.debug ? "    \u2192" : ""} ${chalk.red('Skiping')} The file ${chalk.cyan('"' + fileName + '"')} already exists in the directory.`);
+    return;
   }
 
-  const animeFilePaths = searchFiles(dirPath, fileType, false);
-
-  for (const path of animeFilePaths) {
-    renameAnimeFile(path, fileType);
-  }
+  await rename(options.filePath, newPath);
+  console.log(`${options.debug ? "    \u2192" : ""} ${chalk.green('Successfully renamed')} file ${chalk.cyan('"' + fileName + '"')} \u2192 ${chalk.cyan('"' + fileName + '"')}`);
+  console.log(`${options.debug ? "        FROM" : "  FROM"} ${chalk.cyan('"' + fileName + '"')})`);
+  console.log(`${options.debug ? "        TO" : "  TO"} ${chalk.cyan('"' + newFileName + '"')})`);
 }

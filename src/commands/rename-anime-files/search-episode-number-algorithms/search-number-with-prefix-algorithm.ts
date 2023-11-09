@@ -1,4 +1,4 @@
-import { SearchNumberAlgorithm } from './search-number-algorithm';
+import { SearchNumberAlgorithm } from './search-number-algorithm.js';
 
 export interface SearchNumberWithEPrefixAlgorithmsOptions {
   prefix: string;

@@ -1,4 +1,4 @@
-import { FormatingAlgorithm } from "./formating-algorithms";
+import { FormatingAlgorithm } from "./formating-algorithms.js";
 
 export class RemoveSeasonNumber implements FormatingAlgorithm {
   public apply(fileName: string): string {

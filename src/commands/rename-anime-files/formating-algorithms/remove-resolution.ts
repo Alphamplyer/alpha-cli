@@ -1,4 +1,4 @@
-import { FormatingAlgorithm } from "./formating-algorithms";
+import { FormatingAlgorithm } from "./formating-algorithms.js";
 
 const resolutions: string[] = [
   "360p",

@@ -1,4 +1,4 @@
-import { FormatingAlgorithm } from "./formating-algorithms";
+import { FormatingAlgorithm } from "./formating-algorithms.js";
 
 const encounteredCodecs: string[] = [
   "x264",
