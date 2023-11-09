@@ -103,6 +103,6 @@ async function renameAnimeFile (options: RenameAnimeFileOptions) {
 
   await rename(options.filePath, newPath);
   console.log(`${options.debug ? "    \u2192" : ""} ${chalk.green('Successfully renamed')} file ${chalk.cyan('"' + fileName + '"')} \u2192 ${chalk.cyan('"' + fileName + '"')}`);
-  console.log(`${options.debug ? "        FROM" : "  FROM"} ${chalk.cyan('"' + fileName + '"')})`);
-  console.log(`${options.debug ? "        TO" : "  TO"} ${chalk.cyan('"' + newFileName + '"')})`);
+  console.log(`${options.debug ? "        FROM" : "  FROM"} ${chalk.cyan('"' + fileName + '"')}`);
+  console.log(`${options.debug ? "        TO" : "  TO"} ${chalk.cyan('"' + newFileName + '"')}`);
 }
