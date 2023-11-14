@@ -8,8 +8,8 @@ export class EpisodeNumber {
     this.subValue = subValue;
   }
 
-  public addOffset(offset: number): EpisodeNumber {
-    return new EpisodeNumber(this.value + offset);
+  public addOffset(offset: number): void {
+    this.value += offset;
   }
 
   public toString(): string {

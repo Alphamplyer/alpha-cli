@@ -2,16 +2,17 @@ import { rename } from "fs/promises";
 import { SearchNumberSimpleAlgorithm } from "./search-episode-number-algorithms/search-number-simple-algorithm.js";
 import { SearchNumberWithEPrefixAlgorithms } from "./search-episode-number-algorithms/search-number-with-prefix-algorithm.js";
 import { SearchNumberAlgorithm } from "./search-episode-number-algorithms/search-number-algorithm.js";
-import { PreFormatingAlgorithm, PreformatingOptions } from "./formating-algorithms/formating-algorithms.js";
-import { RemoveCodec } from "./formating-algorithms/remove-codec.js";
-import { RemoveSeasonNumber } from "./formating-algorithms/remove-season-number.js";
+import { PreFormatingAlgorithm, PreformatingOptions } from "./preformating-algorithms/preformating-algorithms.js";
+import { RemoveCodec } from "./preformating-algorithms/remove-codec.js";
+import { RemoveSeasonNumber } from "./preformating-algorithms/remove-season-number.js";
 import { DefaultCommandOptions } from "../../base/default-command-options.js";
 import { isExists, searchFiles } from "../../helpers/files-helper.js";
 import { parse } from "path";
 import chalk from "chalk";
 import { EpisodeNumber } from "../../entities/episode-number.js";
-import { RemoveInSquareBracketsValue } from "./formating-algorithms/remove-in-square-brackets-value.js";
-import { RemoveResolution } from "./formating-algorithms/remove-resolution.js";
+import { RemoveInSquareBracketsValue } from "./preformating-algorithms/remove-in-square-brackets-value.js";
+import { RemoveResolution } from "./preformating-algorithms/remove-resolution.js";
+import { LowerCase } from "./preformating-algorithms/lower-case.js";
 
 
 export interface RenameAnimeFilesOptions extends DefaultCommandOptions {
@@ -46,6 +47,7 @@ export async function renameAnimeFiles(options: RenameAnimeFilesOptions) {
 }
 
 const formatingAlgorithms : PreFormatingAlgorithm[] = [
+  new LowerCase(),
   new RemoveInSquareBracketsValue(),
   new RemoveResolution(),
   new RemoveCodec(),
@@ -64,9 +66,11 @@ const searchEpisodeNumber = (fileName: string, options: PreformatingOptions): Ep
   for (const searchAlgorithm of searchAlgorithms) {
     const episodeNumber = searchAlgorithm.searchEpisodeNumber(formatedFileName);
     if (episodeNumber) {
+      console.log(`    \u2192 ${chalk.gray('Episode number found :')} ${chalk.cyan(episodeNumber.toString())}`);
       return episodeNumber;
     }
   }
+
   return null;
 };
 
@@ -100,7 +104,7 @@ async function renameAnimeFile (options: RenameAnimeFileOptions) {
   const fileName = path.base;
   const fileType = path.ext.substring(1);
 
-  if (fileName.startsWith('Épisode')) {
+  if (isAlreadyRenamed(fileName)) {
     console.log(`${options.debug ? "    \u2192" : ""} ${chalk.red('Skiping')} Episode was already renamed`);
     return;
   }
@@ -111,7 +115,9 @@ async function renameAnimeFile (options: RenameAnimeFileOptions) {
     return;
   }
 
-  const newFileName = `Épisode ${episodeNumber.addOffset(options.offset).toString()}.${fileType}`;
+  episodeNumber.addOffset(options.offset);
+
+  const newFileName = `Épisode ${episodeNumber.toString()}.${fileType}`;
 
   const newPath = options.filePath.replace(fileName, newFileName);
   if (await isExists(newPath)) {
@@ -123,4 +129,10 @@ async function renameAnimeFile (options: RenameAnimeFileOptions) {
   console.log(`${options.debug ? "    \u2192" : ""} ${chalk.green('Successfully renamed')} file:`);
   console.log(`${options.debug ? "        FROM" : "  FROM"} ${chalk.cyan('"' + fileName + '"')}`);
   console.log(`${options.debug ? "        TO" : "  TO"} ${chalk.cyan('"' + newFileName + '"')}`);
+}
+
+const alreadyRenamedRegex = new RegExp(`Épisode \\d+\\.?\\d?`, 'gi');
+
+function isAlreadyRenamed(fileName: string) {
+  return alreadyRenamedRegex.test(fileName);
 }

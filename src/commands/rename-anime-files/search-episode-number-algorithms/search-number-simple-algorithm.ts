@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { EpisodeNumber } from "../../../entities/episode-number.js";
 import { SearchNumberAlgorithm } from "./search-number-algorithm.js";
 
@@ -13,6 +14,7 @@ export class SearchNumberSimpleAlgorithm implements SearchNumberAlgorithm {
   }
 
   public searchEpisodeNumber(fileName: string): EpisodeNumber | null {
+    console.log(`    \u2192 ${chalk.yellow('Searching episode number (simple way)...')}`);
     let regex = /(\d+)/g;
 
     if (this.shouldSearchWithSpaces) {

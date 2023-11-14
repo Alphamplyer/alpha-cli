@@ -1,4 +1,4 @@
-import { PreFormatingAlgorithm, PreformatingOptions } from "./formating-algorithms.js";
+import { PreFormatingAlgorithm, PreformatingOptions } from "./preformating-algorithms.js";
 
 export class RemoveSeasonNumber implements PreFormatingAlgorithm {
   public apply(fileName: string, options: PreformatingOptions): string {

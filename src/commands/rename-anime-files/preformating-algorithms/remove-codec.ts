@@ -1,4 +1,4 @@
-import { PreFormatingAlgorithm, PreformatingOptions } from "./formating-algorithms.js";
+import { PreFormatingAlgorithm, PreformatingOptions } from "./preformating-algorithms.js";
 
 const encounteredCodecs: string[] = [
   "x264",

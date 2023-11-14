@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { EpisodeNumber } from '../../../entities/episode-number.js';
 import { SearchNumberAlgorithm } from './search-number-algorithm.js';
 
@@ -13,6 +14,7 @@ export class SearchNumberWithEPrefixAlgorithms implements SearchNumberAlgorithm 
   }
 
   public searchEpisodeNumber(fileName: string): EpisodeNumber | null {
+    console.log(`    \u2192 ${chalk.yellow('Searching episode number (advanced way)...')}`);
     const regex = new RegExp(`${this.prefix}{1}(\\d+)\\.?(\\d)?`, 'gi');
     const regexMathes = Array.from(fileName.matchAll(regex));
     
