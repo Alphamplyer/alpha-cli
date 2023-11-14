@@ -1,16 +1,20 @@
-import { FormatingAlgorithm } from "./formating-algorithms.js";
+import { PreFormatingAlgorithm, PreformatingOptions } from "./formating-algorithms.js";
 
 const encounteredCodecs: string[] = [
   "x264",
-  "H264",
-  "H.264",
-  "AV1",
-  "MPEG-4",
-  "MPEG4",
+  "h264",
+  "h.264",
+  "av1",
+  "mpeg-4",
+  "mpeg4",
 ];
 
-export class RemoveCodec implements FormatingAlgorithm {
-  public apply(fileName: string): string {
+export class RemoveCodec implements PreFormatingAlgorithm {
+  public apply(fileName: string, options: PreformatingOptions): string {
+    if (options.isCodecFormatingIsDisabled) {
+      return fileName;
+    }
+    
     return encounteredCodecs.reduce((fileName, codec) => {
       return fileName.replace(codec, "");
     }, fileName);

@@ -1,4 +1,5 @@
+import { EpisodeNumber } from "../../../entities/episode-number.js";
 
 export interface SearchNumberAlgorithm {
-  searchEpisodeNumber(fileName: string): number | null;
+  searchEpisodeNumber(fileName: string): EpisodeNumber | null;
 }

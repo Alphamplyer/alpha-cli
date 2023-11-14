@@ -1,3 +1,4 @@
+import { EpisodeNumber } from "../../../entities/episode-number.js";
 import { SearchNumberAlgorithm } from "./search-number-algorithm.js";
 
 export interface SearchNumberSimpleAlgorithmOptions {
@@ -11,17 +12,17 @@ export class SearchNumberSimpleAlgorithm implements SearchNumberAlgorithm {
     this.shouldSearchWithSpaces = options.shouldSearchWithSpaces;
   }
 
-  public searchEpisodeNumber(fileName: string): number | null {
-    let regex = /(\d{2,3})/g;
+  public searchEpisodeNumber(fileName: string): EpisodeNumber | null {
+    let regex = /(\d+)/g;
 
     if (this.shouldSearchWithSpaces) {
-      regex = / (\d{2,3}) /g;
+      regex = / (\d+) /g;
     }
 
     const regexMathes = fileName.match(regex);
     if (!regexMathes) 
       return null;
-    const episodeNumberStr = regexMathes[0];
-    return parseInt(episodeNumberStr) || null;
+    const episodeNumber = parseInt(regexMathes[0]);
+    return new EpisodeNumber(episodeNumber) || null;
   }
 }

@@ -1,4 +1,4 @@
-import { FormatingAlgorithm } from "./formating-algorithms.js";
+import { PreFormatingAlgorithm, PreformatingOptions } from "./formating-algorithms.js";
 
 const resolutions: string[] = [
   "360p",
@@ -9,8 +9,12 @@ const resolutions: string[] = [
   "2160p",
 ];
 
-export class RemoveResolution implements FormatingAlgorithm {
-  public apply(fileName: string): string {
+export class RemoveResolution implements PreFormatingAlgorithm {
+  public apply(fileName: string, options: PreformatingOptions): string {
+    if (options.isResolutionFormatingIsDisabled) {
+      return fileName;
+    }
+    
     return resolutions.reduce((fileName, resolution) => {
       return fileName.replace(resolution, "");
     }, fileName);

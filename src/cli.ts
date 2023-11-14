@@ -42,6 +42,10 @@ program.command("rnanimefiles")
   .option("-d, --debug", "Print logs to the console.")
   .option("-t, --file-type <type>", "The type of the files to rename.")
   .option("-o, --offset <number>", "The offset to add to the episode number.")
+  .option("--dsp, --disable-season-formating", "Disable the season preformating.")
+  .option("--drp, --disable-resolution-preformating", "Disable the resolution preformating.")
+  .option("--dcp, --disable-codec-preformating", "Disable the codec preformating.")
+  .option("--dsbp, --disable-square-brackets-preformating", "Disable the square brackets preformating.")
   .action(async (options) => {
     if (options.offset && options.offset < 0) {
       console.log(chalk.red(`Error: the offset must be a positive number.`));
@@ -51,7 +55,14 @@ program.command("rnanimefiles")
     renameAnimeFiles({
       debug: options.debug || false,
       fileType: options.fileType || null,
-      offset: options.offset || 0
+      offset: options.offset || 0,
+      preformatingOptions: {
+        debug: options.debug || false,
+        isSeasonFormatingIsDisabled: options.disableSeasonFormating || false,
+        isResolutionFormatingIsDisabled: options.disableResolutionPreformating || false,
+        isCodecFormatingIsDisabled: options.disableCodecPreformating || false,
+        isSquareBracketsFormatingIsDisabled: options.disableSquareBracketsPreformating || false
+      }
     });
   });
 

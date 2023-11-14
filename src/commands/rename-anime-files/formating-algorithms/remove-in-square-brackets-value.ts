@@ -1,11 +1,11 @@
 import { PreFormatingAlgorithm, PreformatingOptions } from "./formating-algorithms.js";
 
-export class RemoveSeasonNumber implements PreFormatingAlgorithm {
+export class RemoveInSquareBracketsValue implements PreFormatingAlgorithm {
   public apply(fileName: string, options: PreformatingOptions): string {
-    if (options.isSeasonFormatingIsDisabled) {
+    if (options.isSquareBracketsFormatingIsDisabled) {
       return fileName;
     }
     
-    return fileName.replace(/s{1}(\d{2,3})/gi, "");
+    return fileName.replace(/\[.*\]/g, "");
   }
 }
