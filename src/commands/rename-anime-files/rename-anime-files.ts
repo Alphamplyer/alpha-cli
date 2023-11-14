@@ -75,7 +75,7 @@ const searchEpisodeNumber = (fileName: string, options: PreformatingOptions): Ep
 };
 
 const preformatFileName = (fileName: string, options: PreformatingOptions): string => {
-  let formattedFileName = fileName.toLowerCase();
+  let formattedFileName = fileName;
   
   if (options.debug) {
     console.log(`    \u2192 ${chalk.gray('Preformating file :')} ${chalk.cyan('"' + formattedFileName + '"')}`);
