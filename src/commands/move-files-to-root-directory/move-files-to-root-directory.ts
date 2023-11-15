@@ -20,7 +20,7 @@ export async function moveFilesToRootDirectory(options: MoveFilesToRootDirectory
     recursionLevels: options.maxRecursionLevels
   })) {
     if (options.debug) {
-      console.log(`  \u2192 ${chalk.yellow('File founded')} at ${chalk.cyan('"' + filePath + '"')}`);
+      console.log(`  \u2192 ${chalk.yellow('File found')} at ${chalk.cyan('"' + filePath + '"')}`);
     }
 
     await moveFileToDirectoryRoot({

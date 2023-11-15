@@ -31,7 +31,7 @@ export async function renameAnimeFiles(options: RenameAnimeFilesOptions) {
     recursionLevels: 0
   })) {
     if (options.debug) {
-      console.log(`  \u2192 ${chalk.yellow('File founded')} at ${chalk.cyan('"' + path + '"')}`);
+      console.log(`  \u2192 ${chalk.yellow('File found')} at ${chalk.cyan('"' + path + '"')}`);
     }
 
     await renameAnimeFile({
@@ -66,7 +66,6 @@ const searchEpisodeNumber = (fileName: string, options: PreformatingOptions): Ep
   for (const searchAlgorithm of searchAlgorithms) {
     const episodeNumber = searchAlgorithm.searchEpisodeNumber(formatedFileName);
     if (episodeNumber) {
-      console.log(`    \u2192 ${chalk.gray('Episode number found :')} ${chalk.cyan(episodeNumber.toString())}`);
       return episodeNumber;
     }
   }
@@ -131,7 +130,7 @@ async function renameAnimeFile (options: RenameAnimeFileOptions) {
   console.log(`${options.debug ? "        TO" : "  TO"} ${chalk.cyan('"' + newFileName + '"')}`);
 }
 
-const alreadyRenamedRegex = new RegExp(`Épisode \\d+\\.?\\d?`, 'gi');
+const alreadyRenamedRegex = new RegExp(`Épisode \\d+\\.?\\d?`, 'i');
 
 function isAlreadyRenamed(fileName: string) {
   return alreadyRenamedRegex.test(fileName);
