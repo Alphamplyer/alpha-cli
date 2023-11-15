@@ -57,8 +57,9 @@ const formatingAlgorithms : PreFormatingAlgorithm[] = [
 
 const searchAlgorithms : SearchNumberAlgorithm[] = [
   new SearchNumberWithEPrefixAlgorithms({ prefix: 'E' }),
-  new SearchNumberSimpleAlgorithm(),
-  new SearchNumberSimpleAlgorithm({ shouldSearchWithSpaces: false }),
+  new SearchNumberSimpleAlgorithm({ shouldSearchWithSpaces: true, shouldSearchWithOneDigit: false }),
+  new SearchNumberSimpleAlgorithm({ shouldSearchWithSpaces: false, shouldSearchWithOneDigit: false }),
+  new SearchNumberSimpleAlgorithm({ shouldSearchWithSpaces: false, shouldSearchWithOneDigit: true }),
 ];
 
 const searchEpisodeNumber = (fileName: string, options: PreformatingOptions): EpisodeNumber | null => {
@@ -66,6 +67,9 @@ const searchEpisodeNumber = (fileName: string, options: PreformatingOptions): Ep
   for (const searchAlgorithm of searchAlgorithms) {
     const episodeNumber = searchAlgorithm.searchEpisodeNumber(formatedFileName);
     if (episodeNumber) {
+      if (options.debug) {
+        console.log(`    \u2192 ${chalk.gray('Episode number found :')} ${chalk.cyan('"' + episodeNumber.toString() + '"')}`);
+      }
       return episodeNumber;
     }
   }
@@ -77,7 +81,7 @@ const preformatFileName = (fileName: string, options: PreformatingOptions): stri
   let formattedFileName = fileName;
   
   if (options.debug) {
-    console.log(`    \u2192 ${chalk.gray('Preformating file :')} ${chalk.cyan('"' + formattedFileName + '"')}`);
+    console.log(`    \u2192 ${chalk.gray('Pre-formating file :')} ${chalk.cyan('"' + formattedFileName + '"')}`);
   }
 
   for (const formatingAlgorithm of formatingAlgorithms) {
@@ -85,7 +89,7 @@ const preformatFileName = (fileName: string, options: PreformatingOptions): stri
   }
 
   if (options.debug) {
-    console.log(`      \u2192 ${chalk.gray('File name after formatting :')} ${chalk.cyan('"' + formattedFileName + '"')}`);
+    console.log(`      \u2192 ${chalk.gray('File name after pre-formatting :')} ${chalk.cyan('"' + formattedFileName + '"')}`);
   }
 
   return formattedFileName;
@@ -101,14 +105,15 @@ export interface RenameAnimeFileOptions extends DefaultCommandOptions {
 async function renameAnimeFile (options: RenameAnimeFileOptions) {
   const path = parse(options.filePath);
   const fileName = path.base;
+  const fileNameWithoutExtension = path.name;
   const fileType = path.ext.substring(1);
 
-  if (isAlreadyRenamed(fileName)) {
+  if (isAlreadyRenamed(fileNameWithoutExtension)) {
     console.log(`${options.debug ? "    \u2192" : ""} ${chalk.red('Skiping')} Episode was already renamed`);
     return;
   }
 
-  const episodeNumber: EpisodeNumber | null = searchEpisodeNumber(fileName, options.preformatingOptions);
+  const episodeNumber: EpisodeNumber | null = searchEpisodeNumber(fileNameWithoutExtension, options.preformatingOptions);
   if (!episodeNumber) {
     console.log(`${options.debug ? "    \u2192" : ""} ${chalk.red('Skiping')} Episode number not found in file name : ${chalk.cyan('"' + fileName + '"')}`);
     return;
@@ -130,7 +135,7 @@ async function renameAnimeFile (options: RenameAnimeFileOptions) {
   console.log(`${options.debug ? "        TO" : "  TO"} ${chalk.cyan('"' + newFileName + '"')}`);
 }
 
-const alreadyRenamedRegex = new RegExp(`Épisode \\d+\\.?\\d?`, 'i');
+const alreadyRenamedRegex = /^Épisode (?:(?!(0))\d+(?:.\d+)?$|0$)/
 
 function isAlreadyRenamed(fileName: string) {
   return alreadyRenamedRegex.test(fileName);

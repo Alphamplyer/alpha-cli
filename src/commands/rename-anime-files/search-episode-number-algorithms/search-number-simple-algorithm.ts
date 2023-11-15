@@ -3,23 +3,26 @@ import { SearchNumberAlgorithm } from "./search-number-algorithm.js";
 
 export interface SearchNumberSimpleAlgorithmOptions {
   shouldSearchWithSpaces: boolean;
+  shouldSearchWithOneDigit: boolean;
 }
 
 export class SearchNumberSimpleAlgorithm implements SearchNumberAlgorithm {
   shouldSearchWithSpaces: boolean;
+  shouldSearchWithOneDigit: boolean;
 
-  constructor(options: SearchNumberSimpleAlgorithmOptions = { shouldSearchWithSpaces: true }) {
+  constructor(options: SearchNumberSimpleAlgorithmOptions = { shouldSearchWithSpaces: true, shouldSearchWithOneDigit: false }) {
     this.shouldSearchWithSpaces = options.shouldSearchWithSpaces;
+    this.shouldSearchWithOneDigit = options.shouldSearchWithOneDigit;
   }
 
   public searchEpisodeNumber(fileName: string): EpisodeNumber | null {
-    let regex = /(\d+)\.?(\d?)/g;
+    let regex = this.shouldSearchWithOneDigit ? /(\d{1})(?:.(\d+))?/ : /(\d+)(?:.(\d+))?/;
 
     if (this.shouldSearchWithSpaces) {
-      regex = / (\d+) /g;
+      regex = this.shouldSearchWithOneDigit ? / ?(\d{1})(?:.(\d+))? ?/ : / ?(\d+)(?:.(\d+))? ?/;
     }
     
-    const regexMathes = Array.from(fileName.matchAll(regex));
-    return EpisodeNumber.parseFromRegExpMatchArray(regexMathes);
+    const regexMatchArray: RegExpMatchArray | null = fileName.match(regex)
+    return EpisodeNumber.parseFromRegExpMatchArray(regexMatchArray);
   }
 }

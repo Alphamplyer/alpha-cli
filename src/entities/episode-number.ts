@@ -19,15 +19,14 @@ export class EpisodeNumber {
     return this.value.toString() + '.' + this.subValue.toString();
   }
 
-  public static parseFromRegExpMatchArray(regexMathes: RegExpMatchArray[]): EpisodeNumber | null {
-    if (!regexMathes || regexMathes.length === 0) 
+  public static parseFromRegExpMatchArray(regexMatchArray: RegExpMatchArray | null): EpisodeNumber | null {
+    if (!regexMatchArray || regexMatchArray.length === 0) 
       return null;
 
-    const episodeNumberValue = parseInt(regexMathes[0][1]);
+    const episodeNumberValue = parseInt(regexMatchArray[1]);
 
-    const matchedSubValue = regexMathes[0][2];
+    const matchedSubValue = regexMatchArray[2];
     const episodeNumberSubValue = matchedSubValue === undefined ? null : parseInt(matchedSubValue);
-    
     return new EpisodeNumber(episodeNumberValue, episodeNumberSubValue);
   }
 }

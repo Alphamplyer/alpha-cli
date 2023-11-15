@@ -29,7 +29,7 @@ program.command("mvfiles2root")
       return;
     }
 
-    moveFilesToRootDirectory({
+    await moveFilesToRootDirectory({
       debug: options.debug || false,
       rootPath: options.root || process.cwd(),
       fileType: options.fileType || null,
@@ -52,7 +52,7 @@ program.command("rnanimefiles")
       return;
     }
 
-    renameAnimeFiles({
+    await renameAnimeFiles({
       debug: options.debug || false,
       fileType: options.fileType || null,
       offset: options.offset || 0,
